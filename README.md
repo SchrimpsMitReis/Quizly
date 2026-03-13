@@ -35,7 +35,7 @@ Base path:
 
 ```/api/quizzes/```
 
-#### Create Quiz
+### Create Quiz
 
 Generate a new quiz from a YouTube video.
 
@@ -43,9 +43,7 @@ Generate a new quiz from a YouTube video.
 
 Request:
 
-```{
-  "url": "https://youtu.be/example"
-}```
+``{ "url": "https://youtu.be/example" }``
 
 Response:
 
@@ -70,7 +68,7 @@ Response:
     }
   ]
 }
-List Quizzes
+#### List Quizzes
 GET /api/quizzes/
 
 Returns all quizzes owned by the authenticated user.
