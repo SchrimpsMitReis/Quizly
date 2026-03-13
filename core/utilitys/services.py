@@ -17,6 +17,17 @@ django.setup()
 from django.conf import settings
 
 def video_to_quiz(url, request =None):
+    """
+    Generate a quiz from a YouTube URL.
+
+    The process includes:
+    1. Normalizing the YouTube URL
+    2. Downloading the audio as MP3
+    3. Transcribing the audio
+    4. Converting the transcript into quiz content
+    5. Parsing the quiz into JSON
+    6. Deleting the temporary audio file
+    """
     clean_url = transform_yt_url(url, request)
     sound_path = download_mp3(clean_url, request)["relative_path"]
     transcript = transcribe_audio(sound_path)
@@ -25,7 +36,11 @@ def video_to_quiz(url, request =None):
     _delete_media_file(sound_path)
     return quiz_as_JSON
 
+
 def transform_yt_url(url, request):
+    """
+    Convert a shortened YouTube URL into the standard watch URL format.
+    """
     base_url = "https://www.youtube.com/watch?v="
     
     if "https://youtu.be/" in url:
@@ -34,25 +49,18 @@ def transform_yt_url(url, request):
     
     return url
 
+
 def download_mp3(url: str, request) -> dict:
     """
-    Lädt Audio per yt-dlp herunter, konvertiert zu mp3
-    und speichert die Datei unter MEDIA_ROOT/downloads/mp3/.
+    Download audio from a YouTube URL, convert it to MP3,
+    and store it under MEDIA_ROOT/downloads/mp3/.
 
-    Rückgabe:
-        {
-            "title": "...",
-            "filename": "...mp3",
-            "relative_path": "downloads/mp3/...mp3",
-            "absolute_path": "/.../media/downloads/mp3/...mp3"
-        }
+    Returns:
+        A dictionary containing file information and paths.
     """
-    # from django.conf import settings
-
     target_dir = Path(settings.MEDIA_ROOT) / "downloads" / "mp3"
     target_dir.mkdir(parents=True, exist_ok=True)
 
-    # yt-dlp ersetzt %(ext)s nach der Konvertierung passend
     outtmpl = str(target_dir / "%(title).200B-%(id)s.%(ext)s")
 
     ydl_opts = {
@@ -71,14 +79,13 @@ def download_mp3(url: str, request) -> dict:
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+
         info = ydl.extract_info(url, download=True)
 
-        # Nach Postprocessing ist requested_downloads oft am hilfreichsten
         requested = info.get("requested_downloads") or []
         if requested and requested[0].get("filepath"):
             final_path = Path(requested[0]["filepath"])
         else:
-            # Fallback
             final_path = next(target_dir.glob(f"*{info.get('id', '')}*.mp3"), None)
 
         if not final_path or not final_path.exists():
@@ -93,10 +100,14 @@ def download_mp3(url: str, request) -> dict:
             "absolute_path": str(final_path),
         }
     
+
 def transcribe_audio(relative_path: str, model_name: str = "turbo") -> dict:
     """
-    Nimmt einen relativen Pfad unter MEDIA_ROOT, transkribiert die Audiodatei
-    und gibt Whisper-Ergebnisse zurück.
+    Transcribe an audio file located under MEDIA_ROOT using Whisper.
+
+    Returns:
+        A dictionary containing transcript text, language,
+        segments, and the absolute file path.
     """
     absolute_path = Path(settings.MEDIA_ROOT) / relative_path
 
@@ -113,26 +124,33 @@ def transcribe_audio(relative_path: str, model_name: str = "turbo") -> dict:
         "absolute_path": str(absolute_path),
     }
 
+
 def convert_transcript_to_quiz(transcript, request):
+    """
+    Send the transcript text to Gemini and generate quiz content.
+    """
     client = genai.Client()
 
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
         contents=base_prompt + transcript['text'],
     )
-    print(response.text)
     return response.text
 
+
 def _convert_quiz_to_JSON_dict(quiz, response):
+    """
+    Convert the generated quiz string into a Python dictionary.
+    """
     return json.loads(quiz)
 
 
 def _delete_media_file(relative_path: str) -> bool:
     """
-    Löscht eine Datei unter MEDIA_ROOT anhand ihres relativen Pfades.
+    Delete a file under MEDIA_ROOT using its relative path.
 
-    Beispiel:
-        relative_path = "downloads/mp3/video.mp3"
+    Returns:
+        True if the file was deleted, otherwise False.
     """
     file_path = Path(settings.MEDIA_ROOT) / relative_path
 
@@ -141,8 +159,3 @@ def _delete_media_file(relative_path: str) -> bool:
         return True
 
     return False
-
-
-
-
-

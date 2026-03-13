@@ -1,5 +1,7 @@
 
-
+"""
+  The BasePrompt for Gemini to generate the Quiz JSON
+"""
 
 base_prompt = """
     Based on the following transcript, generate a quiz in valid JSON format.

@@ -19,7 +19,12 @@ from django.urls import path, include
 
 
 urlpatterns = [
+    # Django admin interface
     path('admin/', admin.site.urls),
-    path('api/', include('auth_app.api.urls'),name="auth_app_urls") ,
-    path('api/', include('quiz_app.api.urls'),name="quiz_app_urls") 
+
+    # Authentication related API endpoints (register, login, logout, token refresh)
+    path('api/', include('auth_app.api.urls'), name="auth_app_urls"),
+
+    # Quiz related API endpoints (create, list, retrieve, update, delete quizzes)
+    path('api/', include('quiz_app.api.urls'), name="quiz_app_urls")
 ]

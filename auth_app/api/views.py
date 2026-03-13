@@ -13,9 +13,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 class RegistrationView(APIView):
+    """
+    API endpoint for registering a new user.
+    Accessible without authentication.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Create a new user account using the RegistrationSerializer.
+        """
         serializer = RegistrationSerializer(data=request.data)
 
         data = {}
@@ -26,12 +33,17 @@ class RegistrationView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
-    
-
 class CookieTokenOptainPairView(TokenObtainPairView):
+    """
+    Custom login view that authenticates a user and stores
+    the access and refresh tokens in HttpOnly cookies.
+    """
     permission_classes = [AllowAny]
-    # serializer_class= CustomTokenObtainPairSerializer
+
     def post(self, request, *args, **kwargs):
+        """
+        Validate login credentials and return authentication cookies.
+        """
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -65,19 +77,24 @@ class CookieTokenOptainPairView(TokenObtainPairView):
             samesite="LAX"
         )
 
-        # response.data = serializer.data
         return response
     
 
 class CookieTokenRefreshView(TokenRefreshView):
+    """
+    Refresh the access token using the refresh token stored in cookies.
+    """
 
     def post(self, request, *args, **kwargs):
+        """
+        Generate a new access token if the refresh token is valid.
+        """
+        
         refresh_token = request.COOKIES.get("refresh_token")
 
         if refresh_token is None:
             return Response({"detail": "Refresh token not found"}, status=status.HTTP_401_UNAUTHORIZED)
 
-  
         serializer = self.get_serializer(data={"refresh": refresh_token})
 
         try:
@@ -85,6 +102,7 @@ class CookieTokenRefreshView(TokenRefreshView):
         except:
             return Response({"detail": "Refresh Token invalid"}, status=status.HTTP_401_UNAUTHORIZED)
         
+
         access_token = serializer.validated_data.get("access")
 
         response = Response({"detail": "Token refreshed"})
@@ -100,11 +118,17 @@ class CookieTokenRefreshView(TokenRefreshView):
 
 
 class LogoutView(APIView):
+    """
+    Logout endpoint that deletes authentication cookies
+    and blacklists the refresh token.
+    """
     permission_classes = [IsAuthenticated]
     authentication_classes = [CookieJWTAuthentication]
 
     def post(self, request):
-
+        """
+        Invalidate the refresh token and remove authentication cookies.
+        """
 
         try:
             
@@ -132,6 +156,9 @@ class LogoutView(APIView):
             )
         
     def _blacklist_refresh_token(self, request):
+        """
+        Add the refresh token to the blacklist so it can no longer be used.
+        """
         refresh_token = request.COOKIES.get("refresh_token")
         refresh_token_to_delete = RefreshToken(refresh_token)
         refresh_token_to_delete.blacklist()

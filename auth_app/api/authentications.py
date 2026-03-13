@@ -1,7 +1,23 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class CookieJWTAuthentication(JWTAuthentication):
+    """
+    Custom JWT authentication that supports tokens from
+    the Authorization header or from the "access_token" cookie.
+    """
+
     def authenticate(self, request):
+        """
+        Authenticate a request using a JWT.
+
+        Priority:
+        1. Authorization header
+        2. access_token cookie
+
+        Returns:
+            (user, validated_token) if authentication succeeds,
+            otherwise None.
+        """
         header = self.get_header(request)
         raw_token = ""
         
