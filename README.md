@@ -39,7 +39,7 @@ Base path:
 
 Generate a new quiz from a YouTube video.
 
-```POST /api/quizzes/```
+```python POST /api/quizzes/```
 
 Request:
 
