@@ -12,9 +12,7 @@ class QuizPermission(BasePermission):
     """
 
     def has_permission(self, request, view):
-        # Create und List nur für eingeloggte User
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        # Retrieve / Update / Delete nur wenn Besitzer
         return obj.user == request.user
