@@ -136,6 +136,103 @@ Install dependencies:
 ```
 pip install -r requirements.txt
 ```
+
+___
+## AI Setup
+
+Quizly uses several AI and media-processing tools to automatically generate quizzes from YouTube videos.
+Before running the project, these dependencies must be installed and configured.
+
+## Whisper (Speech-to-Text)
+
+Quizly uses OpenAI Whisper to transcribe the audio of YouTube videos into text.
+The transcription is later used as input for the quiz generation process.
+
+Install Whisper with:
+```
+pip install openai-whisper
+```
+Whisper also requires FFmpeg to process audio files.
+
+Install FFmpeg:
+
+#### Windows
+
+Download FFmpeg from:
+```
+https://ffmpeg.org/download.html
+```
+After installation, make sure the ffmpeg binary is available in your system PATH.
+
+#### Linux
+```
+sudo apt install ffmpeg
+```
+#### Mac
+```
+brew install ffmpeg
+```
+## yt-dlp (YouTube Downloader)
+
+Quizly uses yt-dlp to download the audio track from YouTube videos and convert it into MP3 format.
+
+Install it with:
+```
+pip install yt-dlp
+```
+The downloader extracts the best available audio stream and converts it into an MP3 file that can be processed by Whisper.
+
+## Google Gemini API (Quiz Generation)
+
+The quiz questions are generated using Google Gemini AI.
+
+Install the client library:
+```
+pip install google-genai
+```
+You must also provide an API key.
+
+Create a .env file in the project root:
+```
+GEMINI_API_KEY=your_api_key_here
+```
+You can obtain a Gemini API key from:
+```
+https://ai.google.dev/
+```
+The Gemini model is used to convert the transcript into structured quiz questions.
+
+## AI Processing Pipeline
+
+The quiz generation process works as follows:
+```
+YouTube Video
+      │
+      ▼
+Download Audio (yt-dlp)
+      │
+      ▼
+Convert to MP3
+      │
+      ▼
+Transcription (Whisper)
+      │
+      ▼
+Quiz Generation (Gemini)
+      │
+      ▼
+Structured Quiz JSON
+      │
+      ▼
+Stored in Database
+```
+### Notes
+
+Whisper models are downloaded automatically on first use.
+
+Large videos may take longer to process depending on the selected Whisper model.
+
+The Gemini API requires a valid API key and internet connection.
 ___
 ### Environment Variables
 
