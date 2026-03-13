@@ -1,0 +1,106 @@
+{
+  "title": "Die Geschichte von Frozen Ramen",
+  "description": "Dieses Clip beschreibt die Entstehung eines Start-ups für gefrorenes Ramen, von der ersten Idee im Dorf bis zum Erfolg nach einem Jahr.",
+  "questions": [
+    {
+      "question_title": "Warum kam der Gründer auf die Idee, gefrorenes Ramen anzubieten?",
+      "question_options": [
+        "Er wollte Geld sparen",
+        "Er wohnt im Dorf und der Weg zur Stadt war zu weit",
+        "Er wollte ein neues Hobby finden",
+        "Er mag kein frisches Ramen"
+      ],
+      "answer": "Er wohnt im Dorf und der Weg zur Stadt war zu weit"
+    },
+    {
+      "question_title": "Wie hat der Gründer die Methode des Einfrierens zuerst getestet?",
+      "question_options": [
+        "In einem Restaurant",
+        "Bei einem Freund in der Küche",
+        "Zuhause durch Ausprobieren",
+        "In einer Fabrik"
+      ],
+      "answer": "Zuhause durch Ausprobieren"
+    },
+    {
+      "question_title": "Wie beschreibt der Gründer den Geschmack des Ramens nach dem Auftauen?",
+      "question_options": [
+        "Wie im Restaurant",
+        "Etwas wässrig",
+        "Sehr salzig",
+        "Nicht so gut wie frisch"
+      ],
+      "answer": "Wie im Restaurant"
+    },
+    {
+      "question_title": "Welchen Beruf übt der Freund aus, der bei der Umsetzung half?",
+      "question_options": [
+        "Koch",
+        "Logistikexperte",
+        "Webseiten-Entwickler",
+        "Marketing-Berater"
+      ],
+      "answer": "Webseiten-Entwickler"
+    },
+    {
+      "question_title": "Wie wurde das Startkapital für das Projekt gesammelt?",
+      "question_options": [
+        "Durch einen Bankkredit",
+        "Durch eine Crowdfunding-Aktion",
+        "Durch Ersparnisse der Eltern",
+        "Durch den Verkauf eines Autos"
+      ],
+      "answer": "Durch eine Crowdfunding-Aktion"
+    },
+    {
+      "question_title": "Wie viele Ramen wurden innerhalb der ersten zwei Wochen verkauft?",
+      "question_options": [
+        "50 Ramen",
+        "100 Ramen",
+        "500 Ramen",
+        "1000 Ramen"
+      ],
+      "answer": "100 Ramen"
+    },
+    {
+      "question_title": "In welchem Land wird das Produkt laut Clip angeboten?",
+      "question_options": [
+        "Japan",
+        "Österreich",
+        "Schweiz",
+        "Deutschland"
+      ],
+      "answer": "Deutschland"
+    },
+    {
+      "question_title": "Wie lange existiert das Unternehmen zum Zeitpunkt der Aufnahme schon?",
+      "question_options": [
+        "Seit einem Monat",
+        "Seit einem halben Jahr",
+        "Seit einem Jahr",
+        "Seit drei Jahren"
+      ],
+      "answer": "Seit einem Jahr"
+    },
+    {
+      "question_title": "Was versucht das Team laut dem Gründer jeden Tag zu tun?",
+      "question_options": [
+        "Mehr Geld zu verdienen",
+        "Die Rezepte zu verändern",
+        "Sich jeden Tag zu verbessern",
+        "In eine größere Stadt zu ziehen"
+      ],
+      "answer": "Sich jeden Tag zu verbessern"
+    },
+    {
+      "question_title": "Was war das Feedback der Kunden auf die Idee?",
+      "question_options": [
+        "Sie waren unzufrieden mit der Lieferung",
+        "Sie waren glücklich über das Angebot in Deutschland",
+        "Es war ihnen zu teuer",
+        "Das Ramen war ihnen zu scharf"
+      ],
+      "answer": "Sie waren glücklich über das Angebot in Deutschland"
+    }
+  ]
+}
