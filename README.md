@@ -1,58 +1,45 @@
-Quizly
+# Quizly
 
 Quizly is a backend API that automatically generates quizzes from YouTube videos.
 The system downloads the audio from a video, transcribes it, and uses AI to generate quiz questions.
 
 The result is a structured quiz with multiple questions and answer options that can be consumed by any frontend application.
 
-Features
+## Features
 
-Generate quizzes automatically from YouTube videos
+- Generate quizzes automatically from YouTube videos
+- Download and convert video audio to MP3
+- Transcribe audio using speech-to-text
+- Generate quiz questions using AI
+- Store quizzes and questions in a database
+- REST API for creating, retrieving, updating, and deleting quizzes
+- Authentication and permissions for user-owned quizzes
 
-Download and convert video audio to MP3
+## Tech Stack
 
-Transcribe audio using speech-to-text
+### Backend
+- Python
+- Django
+- Django REST Framework
 
-Generate quiz questions using AI
+### AI / Processing
+- yt-dlp (YouTube audio download)
+- Whisper (speech-to-text transcription)
+- Google Gemini API (quiz generation)
 
-Store quizzes and questions in a database
+### Database
+- SQLite (default, development)
 
-REST API for creating, retrieving, updating, and deleting quizzes
-
-Authentication and permissions for user-owned quizzes
-
-Tech Stack
-
-Backend
-
-Python
-
-Django
-
-Django REST Framework
-
-AI / Processing
-
-yt-dlp (YouTube audio download)
-
-Whisper (speech-to-text transcription)
-
-Google Gemini API (quiz generation)
-
-Database
-
-SQLite (default, development)
-
-API Endpoints
-
+## API Endpoints
 Base path:
 
-/api/quizzes/
-Create Quiz
+`/api/quizzes/`
+
+#### Create Quiz
 
 Generate a new quiz from a YouTube video.
 
-POST /api/quizzes/
+`POST /api/quizzes/`
 
 Request:
 
