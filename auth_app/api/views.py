@@ -1,14 +1,11 @@
-
-
-
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from django.http import HttpResponse
+import json
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-
 from auth_app.api.authentications import CookieJWTAuthentication
-from .serializers import RegistrationSerializer, CustomTokenObtainPairSerializer
+from .serializers import RegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
@@ -24,13 +21,14 @@ class RegistrationView(APIView):
         Create a new user account using the RegistrationSerializer.
         """
         serializer = RegistrationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        data = {}
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"detail": "User created successfully!"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponse(
+            json.dumps({"detail": "User created successfully!"}),
+            content_type="application/json",
+            status=status.HTTP_201_CREATED
+            )
         
 
 class CookieTokenOptainPairView(TokenObtainPairView):
@@ -53,14 +51,18 @@ class CookieTokenOptainPairView(TokenObtainPairView):
 
         user = serializer.user
 
-        response = Response({
-            "detail": "Login successfully!",
-            "user": {
-                "id": user.id,
-                "username": user.username,
-                "email": user.email
-            }
-        })
+        response = HttpResponse(
+            json.dumps({
+                "detail": "Login successfully!",
+                "user": {
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email
+                }
+            }),
+            content_type="application/json",
+            status=status.HTTP_200_OK
+        )
 
         response.set_cookie(
             key="access_token",
@@ -93,19 +95,30 @@ class CookieTokenRefreshView(TokenRefreshView):
         refresh_token = request.COOKIES.get("refresh_token")
 
         if refresh_token is None:
-            return Response({"detail": "Refresh token not found"}, status=status.HTTP_401_UNAUTHORIZED)
+            return HttpResponse(
+                json.dumps(
+                    {"detail": "Refresh token not found"}),
+                    content_type="application/json", 
+                    status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = self.get_serializer(data={"refresh": refresh_token})
 
         try:
             serializer.is_valid(raise_exception=True)
         except:
-            return Response({"detail": "Refresh Token invalid"}, status=status.HTTP_401_UNAUTHORIZED)
+            return HttpResponse(
+                json.dumps({"detail": "Refresh Token invalid"}), 
+                content_type="application/json",
+                status=status.HTTP_401_UNAUTHORIZED)
         
 
         access_token = serializer.validated_data.get("access")
 
-        response = Response({"detail": "Token refreshed"})
+        response = HttpResponse(
+            json.dumps({"detail": "Token refreshed"}), 
+            content_type="application/json", 
+            status=status.HTTP_200_OK)
+        
         response.set_cookie(
             key="access_token",
             value=access_token,
@@ -134,8 +147,9 @@ class LogoutView(APIView):
             
             self._blacklist_refresh_token(request)
 
-            response = Response(
-                {"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."},
+            response = HttpResponse(
+                json.dumps({"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."}),
+                content_type="application/json",
                 status=status.HTTP_200_OK
             )
 
@@ -150,8 +164,9 @@ class LogoutView(APIView):
             return response
         
         except Exception:
-            return Response(
-                {"error": "Invalid token"},
+            return HttpResponse(
+                json.dumps({"error": "Invalid token"}),
+                content_type="application/json",
                 status=status.HTTP_400_BAD_REQUEST
             )
         
