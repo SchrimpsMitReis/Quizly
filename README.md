@@ -33,19 +33,19 @@ The result is a structured quiz with multiple questions and answer options that 
 ## API Endpoints
 Base path:
 
-`/api/quizzes/`
+```/api/quizzes/```
 
 #### Create Quiz
 
 Generate a new quiz from a YouTube video.
 
-`POST /api/quizzes/`
+```POST /api/quizzes/```
 
 Request:
 
-{
+```{
   "url": "https://youtu.be/example"
-}
+}```
 
 Response:
 
