@@ -47,6 +47,9 @@ def transform_yt_url(url, request):
         video_id = url[17:28]
         return base_url + video_id
     
+    if "https://" not in url and "www" in url:
+        return "https://" + url
+
     return url
 
 

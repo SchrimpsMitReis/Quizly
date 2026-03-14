@@ -31,7 +31,9 @@ SECRET_KEY = 'django-insecure-^(tz=!i&!lqj$bya*@yp-2u+$6j#(#6(an-tf+sk#w$esi&7o#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "http://127.0.0.1:8000/"
+]
 
 
 # Application definition
@@ -46,13 +48,14 @@ INSTALLED_APPS = [
     'auth_app',
     'quiz_app',
     'rest_framework',
-    "rest_framework_simplejwt.token_blacklist"
-]
+    "rest_framework_simplejwt.token_blacklist",
+    "corsheaders"]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -76,6 +79,12 @@ TEMPLATES = [
     },
 ]
 
+CORS_ALLOWED_ORIGINS = [
+'http://127.0.0.1:5500',
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
