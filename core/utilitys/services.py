@@ -1,3 +1,4 @@
+from django.conf import settings
 import json
 from pathlib import Path
 import sys
@@ -14,9 +15,9 @@ sys.path.insert(0, str(BASE_DIR))
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 django.setup()
-from django.conf import settings
 
-def video_to_quiz(url, request =None):
+
+def video_to_quiz(url, request=None):
     """
     Generate a quiz from a YouTube URL.
 
@@ -42,13 +43,18 @@ def transform_yt_url(url, request):
     Convert a shortened YouTube URL into the standard watch URL format.
     """
     base_url = "https://www.youtube.com/watch?v="
-    
-    if "https://youtu.be/" in url:
-        video_id = url[17:28]
-        return base_url + video_id
-    
-    if "https://" not in url and "www" in url:
-        return "https://" + url
+
+    match url:
+
+        case url if "https://youtu.be/" in url:
+            video_id = url[17:28]
+            return base_url + video_id
+        
+        case url if "https://" not in url and "www." in url:
+            return "https://" + url
+        
+        case url if "www." not in url:
+            return "https://www." + url
 
     return url
 
@@ -89,7 +95,8 @@ def download_mp3(url: str, request) -> dict:
         if requested and requested[0].get("filepath"):
             final_path = Path(requested[0]["filepath"])
         else:
-            final_path = next(target_dir.glob(f"*{info.get('id', '')}*.mp3"), None)
+            final_path = next(target_dir.glob(
+                f"*{info.get('id', '')}*.mp3"), None)
 
         if not final_path or not final_path.exists():
             raise FileNotFoundError("MP3-Datei wurde nicht gefunden.")
@@ -102,7 +109,7 @@ def download_mp3(url: str, request) -> dict:
             "relative_path": str(relative_path).replace("\\", "/"),
             "absolute_path": str(final_path),
         }
-    
+
 
 def transcribe_audio(relative_path: str, model_name: str = "turbo") -> dict:
     """
