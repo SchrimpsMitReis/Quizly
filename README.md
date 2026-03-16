@@ -143,6 +143,13 @@ ___
 Quizly uses several AI and media-processing tools to automatically generate quizzes from YouTube videos.
 Before running the project, these dependencies must be installed and configured.
 
+**Whisper, YT-dlp and Gemini already exist on the requirements.txt**
+
+**Just ffmpeg should be installed cause it's no Python Package!**
+
+**In case of Gemini just start with the .env file**
+
+
 ## Whisper (Speech-to-Text)
 
 Quizly uses OpenAI Whisper to transcribe the audio of YouTube videos into text.

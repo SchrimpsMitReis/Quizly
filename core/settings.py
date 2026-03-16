@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,9 +33,9 @@ SECRET_KEY = 'django-insecure-^(tz=!i&!lqj$bya*@yp-2u+$6j#(#6(an-tf+sk#w$esi&7o#
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "http://127.0.0.1:8000/"
+    "localhost",
+    "127.0.0.1",
 ]
-
 
 # Application definition
 
@@ -139,3 +140,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
