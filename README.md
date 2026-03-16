@@ -141,7 +141,7 @@ ___
 ## AI Setup
 
 Quizly uses several AI and media-processing tools to automatically generate quizzes from YouTube videos.
-Before running the project, these dependencies must be installed and configured.
+Before running the project, these dependencies must be installed and configured. 
 
 **Whisper, YT-dlp and Gemini already exist on the requirements.txt**
 
