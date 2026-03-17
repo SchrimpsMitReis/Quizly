@@ -8,6 +8,8 @@ from auth_app.api.authentications import CookieJWTAuthentication
 from .serializers import RegistrationSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework.response import Response
+
 
 class RegistrationView(APIView):
     """
@@ -24,14 +26,10 @@ class RegistrationView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return HttpResponse(
-            json.dumps({"detail": "User created successfully!"}),
-            content_type="application/json",
-            status=status.HTTP_201_CREATED
-            )
+        return Response({"detail": "User created successfully!"},status=status.HTTP_201_CREATED)
         
 
-class CookieTokenOptainPairView(TokenObtainPairView):
+class LoginView(TokenObtainPairView):
     """
     Custom login view that authenticates a user and stores
     the access and refresh tokens in HttpOnly cookies.
@@ -40,7 +38,7 @@ class CookieTokenOptainPairView(TokenObtainPairView):
 
     def post(self, request, *args, **kwargs):
         """
-        Validate login credentials and return authentication cookies.
+        Validate login credentials and return and sets authentication cookies and account data.
         """
 
         serializer = self.get_serializer(data=request.data)
@@ -51,16 +49,14 @@ class CookieTokenOptainPairView(TokenObtainPairView):
 
         user = serializer.user
 
-        response = HttpResponse(
-            json.dumps({
+        response = Response({
                 "detail": "Login successfully!",
                 "user": {
                     "id": user.id,
                     "username": user.username,
                     "email": user.email
                 }
-            }),
-            content_type="application/json",
+            },
             status=status.HTTP_200_OK
         )
 
@@ -95,29 +91,19 @@ class CookieTokenRefreshView(TokenRefreshView):
         refresh_token = request.COOKIES.get("refresh_token")
 
         if refresh_token is None:
-            return HttpResponse(
-                json.dumps(
-                    {"detail": "Refresh token not found"}),
-                    content_type="application/json", 
-                    status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "Refresh token not found"}, status=status.HTTP_401_UNAUTHORIZED)
 
         serializer = self.get_serializer(data={"refresh": refresh_token})
 
         try:
             serializer.is_valid(raise_exception=True)
         except:
-            return HttpResponse(
-                json.dumps({"detail": "Refresh Token invalid"}), 
-                content_type="application/json",
-                status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"detail": "Refresh Token invalid"}, status=status.HTTP_401_UNAUTHORIZED)
         
 
         access_token = serializer.validated_data.get("access")
 
-        response = HttpResponse(
-            json.dumps({"detail": "Token refreshed"}), 
-            content_type="application/json", 
-            status=status.HTTP_200_OK)
+        response = Response({"detail": "Token refreshed"}, status=status.HTTP_200_OK)
         
         response.set_cookie(
             key="access_token",
@@ -147,9 +133,8 @@ class LogoutView(APIView):
             
             self._blacklist_refresh_token(request)
 
-            response = HttpResponse(
-                json.dumps({"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."}),
-                content_type="application/json",
+            response = Response(
+                {"detail": "Log-Out successfully! All Tokens will be deleted. Refresh token is now invalid."}, 
                 status=status.HTTP_200_OK
             )
 
@@ -164,11 +149,7 @@ class LogoutView(APIView):
             return response
         
         except Exception:
-            return HttpResponse(
-                json.dumps({"error": "Invalid token"}),
-                content_type="application/json",
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "Invalid token"},status=status.HTTP_400_BAD_REQUEST)
         
     def _blacklist_refresh_token(self, request):
         """

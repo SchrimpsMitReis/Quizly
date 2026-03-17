@@ -5,7 +5,8 @@ from quiz_app.api.permissions import QuizPermission
 from quiz_app.api.serializers import QuizCreateSerializer, QuizInputSerializer
 from quiz_app.models import Quiz
 from rest_framework import status
-from django.http import HttpResponse
+# from django.http import HttpResponse
+from rest_framework.response import Response
 import json
 from google.genai.errors import ClientError
 
@@ -23,6 +24,10 @@ class QuizViewSet(ModelViewSet):
     serializer_class = QuizCreateSerializer
 
     def create(self, request, *args, **kwargs):
+        """
+        the Method takes the URL from the Request, serializes it, gives it to the AI Pipe,
+        serializes the result saves and respond it. All is secured 
+        """
         try:
             serialized_input = self._serialize_input(request)
             quiz_as_JSON = video_to_quiz(serialized_input['url'], request)
@@ -32,18 +37,10 @@ class QuizViewSet(ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save(user=request.user)
 
-            return HttpResponse(
-                json.dumps(serializer.data, default=str),
-                content_type="application/json",
-                status=201
-            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         except ClientError as e:
-            return HttpResponse(
-                json.dumps({"detail": "Gemini quota exceeded. Please try again later."}),
-                content_type="application/json",
-                status=429
-            )
+            return Response({"detail": "Gemini quota exceeded. Please try again later."}, status=status.HTTP_400_BAD_REQUEST)
         
     def list(self, request, *args, **kwargs):
         """
@@ -52,48 +49,16 @@ class QuizViewSet(ModelViewSet):
         queryset = Quiz.objects.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
 
-        return HttpResponse(
-            json.dumps(serializer.data),
-            content_type="application/json",
-            status=status.HTTP_200_OK
-        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
-        """
-        Retrieve a single quiz by its ID.
-        """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-
-        return HttpResponse(
-            json.dumps(serializer.data),
-            content_type="application/json",
-            status=status.HTTP_200_OK
-        )
-
+        return super().retrieve(request, *args, **kwargs)
+    
     def partial_update(self, request, *args, **kwargs):
-        """
-        Partially update quiz fields such as title or description.
-        """
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return HttpResponse(
-            json.dumps(serializer.data),
-            content_type="application/json",
-            status=status.HTTP_200_OK
-        )
-
+        return super().partial_update(request, *args, **kwargs)
+    
     def destroy(self, request, *args, **kwargs):
-        """
-        Delete a quiz and its related questions.
-        """
-        instance = self.get_object()
-        instance.delete()
-
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        return super().destroy(request, *args, **kwargs)
 
     def _serialize_input(self, request):
         """
